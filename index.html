@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>To the Power of Math!</title>
+    <style>
+    h1 {
+        color: #FFFFFF;
+        font-family: system-ui;
+        margin-left: 20px;
+    }
+    body {
+        background-color: #222629;
+    }
+    label {
+        color: #86C232;
+        font-family: system-ui;
+        font-size: 20px;
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+    button {
+        background-color: #86C232;
+        border-color: #86C232;
+        color: #FFFFFF;
+        font-family: system-ui;
+        font-size: 20px;
+        font-weight: bold;
+        margin-left: 30px;
+        margin-top: 20px;
+        width: 140px;
+    }
+    input {
+        color: #222629;
+        font-family: system-ui;
+        font-size: 20px;
+        margin-left: 10px;
+        margin-top: 20px;
+        width: 100px;
+    }
+    </style>
+    <script>
+        var callAPI = (base, exponent) => {
+            console.log("Base:", base);
+            console.log("Exponent:", exponent);
+
+            if (isNaN(base) || isNaN(exponent) || base === '' || exponent === '') {
+                alert("Please enter valid numbers for both base and exponent.");
+                return;
+            }
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({ "base": base, "exponent": exponent });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            console.log("Request Options:", requestOptions);
+
+            fetch("https://8zzu3gh7ii.execute-api.ap-south-1.amazonaws.com/dev/", requestOptions)
+                .then(response => {
+                    console.log("Response Status:", response.status);
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text) });
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    console.log("API Result:", result);
+                    alert(result.body);
+                })
+                .catch(error => {
+                    console.log('Error:', error.message);
+                    alert('There was an error processing your request: ' + error.message);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>TO THE POWER OF MATH!</h1>
+    <form>
+        <label>Base number:</label>
+        <input type="text" id="base">
+        <label>...to the power of:</label>
+        <input type="text" id="exponent">
+        <button type="button" onclick="callAPI(document.getElementById('base').value, document.getElementById('exponent').value)">CALCULATE</button>
+    </form>
+</body>
+</html>
